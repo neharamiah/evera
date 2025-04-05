@@ -84,6 +84,48 @@ def dashboard():
     return render_template('dashboard.html', user=current_user)
 
 
+#emissionsroute
+@app.route("/emissions", methods=["GET", "POST"])
+@login_required
+def emissions():
+    return render_template("emissions.html")
+
+
+#greencore route
+@app.route('/greenscore')
+@login_required
+def green_score():
+    return render_template('greenscore.html')
+
+
+
+#offset route
+@app.route('/offset-emissions')
+@login_required
+def offset_emissions():
+    return render_template('offset-emissions.html')
+
+
+#certifications route
+@app.route("/certifications")
+def certifications_page():
+    return render_template("certifications.html")
+
+
+#badges route
+@app.route('/badges')
+def badges():
+    return render_template('badges.html')
+
+
+#logout
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("home"))
+
+
 if __name__ == '__main__':
     create_database(app)
     app.run(debug=True)
