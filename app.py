@@ -212,7 +212,15 @@ def green_score():
 @app.route('/offset-emissions')
 @login_required
 def offset_emissions():
-    return render_template('offset-emissions.html')
+    current_user.update_emission_and_score()
+
+    progress = min(100, (current_user.total_offset / current_user.total_emission) * 100) if current_user.total_emission > 0 else 0
+
+    return render_template('offset-emissions.html',
+                           total_emission=current_user.total_emission,
+                           total_offset=current_user.total_offset,
+                           net_emission=current_user.net_emission,
+                           progress=progress)
 
 
 #certifications route

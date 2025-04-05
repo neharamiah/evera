@@ -60,6 +60,19 @@
             chartContainer.classList.remove("hidden");
             chartContainer.scrollIntoView({ behavior: "smooth" });
         });
+
+        document.getElementById('emissionForm').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const formElements = Array.from(this.elements).filter(el => el.tagName === 'INPUT' || el.tagName === 'SELECT');
+            const index = formElements.indexOf(document.activeElement);
+            if (index > -1 && index < formElements.length - 1) {
+                formElements[index + 1].focus();
+            } else {
+                document.querySelector("button[type='button']").click(); // Trigger calculate if it's the last field
+            }
+        }
+    });
     </script>
 </body>
 </html>

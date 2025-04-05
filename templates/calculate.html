@@ -9,7 +9,7 @@
 <body class="bg-cover bg-no-repeat bg-top min-h-screen flex items-center justify-center" style="background-image: url('/static/bg.png');">
 
     <div class="max-w-2xl w-full bg-white bg-opacity-10 border-2 border-gray-400 rounded-2xl p-8 text-green-200">
-        <h1 class="text-4xl font-bold text-green-300 mb-6">Calculate Carbon Emissions</h1>
+        <h1 class="text-4xl font-bold text-green-300 mb-6">Estimate Carbon Emissions</h1>
 
         <form id="emissionForm" class="space-y-6">
             <div>
@@ -42,6 +42,8 @@
 
         <div id="result" class="mt-6 text-xl font-bold"></div>
     </div>
+    
+
 
     <script>
         function calculateEmissions() {
@@ -61,10 +63,24 @@
                 sea: 20
             };
 
-            const emissions = weight * distance * emissionFactors[transport];
+            const emissions = weight * distance * emissionFactors[transport]/1000000;
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = `🌍 Estimated Emissions: <strong>${emissions.toFixed(2)} kg CO₂</strong>`;
         }
+
+
+        document.getElementById('emissionForm').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const formElements = Array.from(this.elements).filter(el => el.tagName === 'INPUT' || el.tagName === 'SELECT');
+            const index = formElements.indexOf(document.activeElement);
+            if (index > -1 && index < formElements.length - 1) {
+                formElements[index + 1].focus();
+            } else {
+                document.querySelector("button[type='button']").click(); // Trigger calculate if it's the last field
+            }
+        }
+    });
     </script>
 </body>
 </html>

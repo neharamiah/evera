@@ -1,11 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>offset-emissions</title>
+    <title>Offset Emissions - Carbon Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <p>coming soon</p>
+
+<body class="bg-[#0a1a0a] text-white flex flex-col items-center p-10 min-h-screen">
+
+    <!-- Title and Back Button -->
+    <div class="w-full max-w-5xl flex items-center mb-6">
+        <a href="/dashboard" class="bg-gray-700 text-white font-bold px-4 py-2 rounded-md hover:bg-gray-900 transition text-sm absolute left-0 ml-10">
+            ← Back to Dashboard
+        </a>
+        <h1 class="text-4xl font-bold text-green-300 uppercase mx-auto">Carbon Emission Tracker</h1>
+    </div>
+
+    <!-- Emission Overview -->
+    <div class="bg-gray-800 bg-opacity-50 rounded-lg p-8 mb-8 w-full max-w-5xl shadow-lg">
+        <h2 class="text-2xl font-semibold mb-4 text-green-300">Emission Overview</h2>
+        <p class="text-lg">Total Emissions: <strong class="text-red-400">{{ total_emission }} kg CO₂</strong></p>
+        <p class="text-lg">Total Offset: <strong class="text-green-400">{{ total_offset }} kg CO₂</strong></p>
+        <p class="text-lg">Net Emissions: <strong class="text-yellow-400">{{ net_emission }} kg CO₂</strong></p>
+
+        <!-- Progress Bar -->
+        <div class="mt-6">
+            <label class="text-md font-medium">Offset Progress: {{ progress }}%</label>
+            <div class="w-full h-6 bg-gray-700 rounded-lg mt-2 overflow-hidden">
+                <div class="h-full bg-green-500 transition-all duration-500" style="width: {{ progress }}%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offset Methods -->
+    <h2 class="text-2xl font-semibold mb-4 text-green-300">Offset Methods</h2>
+    <div class="grid grid-cols-3 gap-6 w-full max-w-5xl">
+        <div class="bg-gray-800 bg-opacity-50 rounded-lg p-6 shadow-md flex flex-col justify-between h-56">
+            <h3 class="text-xl font-semibold text-green-400">Renewable Energy</h3>
+            <p class="text-md mt-3">Offset CO₂ by investing in renewable energy (solar, wind).</p>
+            <a href="/offset/renewable" class="mt-auto bg-gray-500 text-white py-3 px-5 rounded w-full text-center font-medium cursor-not-allowed">
+                Coming Soon
+            </a>
+        </div>
+
+        <div class="bg-gray-800 bg-opacity-50 rounded-lg p-6 shadow-md flex flex-col justify-between h-56">
+            <h3 class="text-xl font-semibold text-green-400">Reforestation</h3>
+            <p class="text-md mt-3">Contribute to afforestation projects and offset your carbon footprint.</p>
+            <a href="/offset/afforestation" class="mt-auto bg-gray-500 text-white py-3 px-5 rounded w-full text-center font-medium cursor-not-allowed">
+                Coming Soon
+            </a>
+        </div>
+
+        <div class="bg-gray-800 bg-opacity-50 rounded-lg p-6 shadow-md flex flex-col justify-between h-56">
+            <h3 class="text-xl font-semibold text-green-400">Community Projects</h3>
+            <p class="text-md mt-3">Support sustainability projects that reduce CO₂ emissions.</p>
+            <a href="/offset/community" class="mt-auto bg-gray-500 text-white py-3 px-5 rounded w-full text-center font-medium cursor-not-allowed">
+                Coming Soon
+            </a>
+        </div>
+    </div>
+
 </body>
+
 </html>
