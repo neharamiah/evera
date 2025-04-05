@@ -193,7 +193,7 @@ def get_emission_data():
 @login_required
 def green_score():
     current_user.net_emission = max(0, current_user.total_emission - current_user.total_offset)
-    current_user.green_score = max(0, 100 - ((current_user.net_emission)*0.0005)) 
+    current_user.green_score = max(0, 100 - ((current_user.net_emission)*0.0000005)) 
     db.session.commit()
 
     leaderboard = User.query.order_by(User.green_score.desc()).limit(10).all()
