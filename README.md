@@ -56,5 +56,11 @@ This tool enables companies to compute their carbon footprint based on shipment 
 4. **Visit**
     Open your browser and go to: http://localhost:5000
 
+
+5. **Reccomended**
+    login with the following credentials to have a better data set and experience.
+    email id : amazin@gmail.com
+    pwd : amazin
+
 ## Screenshots
 
