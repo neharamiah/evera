@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renewable Energy Offset</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#0a1a0a] text-white flex flex-col items-center p-10 min-h-screen">
+
+    <div class="w-full max-w-5xl flex items-center mb-6">
+        <a href="{{ url_for('offset_emissions') }}" class="bg-gray-700 text-white font-bold px-4 py-2 rounded-md hover:bg-gray-900 transition text-sm absolute left-0 ml-10">
+            ← Back to Offset
+        </a>
+        <h1 class="text-4xl font-bold text-green-300 uppercase mx-auto">Renewable Energy Offset</h1>
+    </div>
+
+    <div class="bg-gray-800 bg-opacity-50 p-8 rounded-lg shadow-lg w-full max-w-3xl">
+        <h2 class="text-2xl font-semibold text-green-400 mb-2 text-center"> Offset Emissions with Solar Energy</h2>
+        <p class="text-md text-gray-300 text-center mb-6">
+            Enter your solar panel details to calculate and offset CO₂ emissions.
+        </p>
+
+        <form method="POST" action="{{ url_for('offset_renewable') }}" class="flex flex-col gap-4">
+            <label class="font-medium">Energy Produced (kWh):</label>
+            <input type="number" name="kwh" id="kwh" step="0.01" required 
+                class="p-3 text-gray-900 rounded-lg border border-gray-600 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+            <label class="font-medium">Sunlight Hours/Day:</label>
+            <input type="number" name="sunlight_hours" id="sunlight_hours" step="0.1" required 
+                class="p-3 text-gray-900 rounded-lg border border-gray-600 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+            <label class="font-medium">Days of Operation:</label>
+            <input type="number" name="days_run" id="days_run" required 
+                class="p-3 text-gray-900 rounded-lg border border-gray-600 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+            <button type="submit" 
+                class="mt-6 bg-green-600 hover:bg-green-500 text-white py-3 px-6 rounded-lg font-medium transition">
+                Calculate & Offset
+            </button>
+        </form>
+    </div>
+</body>
+
+</html>

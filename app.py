@@ -223,6 +223,40 @@ def offset_emissions():
                            progress=progress)
 
 
+# renewable energy offset
+@app.route('/offset/renewable', methods=['GET', 'POST'])
+@login_required
+def offset_renewable():
+    if request.method == 'POST':
+        try:
+
+            kwh = float(request.form.get('kwh'))
+            sunlight_hours = float(request.form.get('sunlight_hours'))
+            days_run = int(request.form.get('days_run'))
+
+            emission_factor = 850  
+
+
+            total_energy = kwh * sunlight_hours * days_run
+            offset_amount = round(total_energy * emission_factor, 2)
+
+
+            new_offset = Offset(user_id=current_user.id, category='Renewable Energy', amount=offset_amount)
+            db.session.add(new_offset)
+            db.session.commit()
+
+
+            current_user.update_emission_and_score()
+
+            flash(f'Success! You offset {offset_amount} g of CO₂ from renewable energy.', 'success')
+            return redirect(url_for('offset_emissions'))
+
+        except (ValueError, TypeError):
+            flash('Invalid input. Please enter valid numbers for kWh, sunlight hours, and days.', 'error')
+
+    return render_template('offset_renewable.html')
+
+
 #certifications route
 @app.route("/certifications")
 def certifications_page():
