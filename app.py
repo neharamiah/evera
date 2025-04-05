@@ -227,6 +227,7 @@ def offset_emissions():
 @app.route('/offset/renewable', methods=['GET', 'POST'])
 @login_required
 def offset_renewable():
+
     if request.method == 'POST':
         try:
 
@@ -256,6 +257,35 @@ def offset_renewable():
 
     return render_template('offset_renewable.html')
 
+# afforestation offset
+@app.route('/offset/afforestation', methods=['GET', 'POST'])
+@login_required
+def offset_afforestation():
+    if request.method == 'POST':
+        try:
+            trees_planted = int(request.form.get('trees_planted'))
+            tree_age = int(request.form.get('tree_age'))
+
+            if trees_planted <= 0 or tree_age <= 0:
+                flash("Please enter valid positive numbers.", "error")
+                return redirect(url_for('offset_afforestation'))
+
+            offset_amount = round(trees_planted * tree_age * 21.77, 2)
+
+            new_offset = Offset(user_id=current_user.id, category='Afforestation', amount=offset_amount)
+            db.session.add(new_offset)
+            db.session.commit()
+
+            current_user.update_emission_and_score()
+
+            flash(f'Success! You offset {offset_amount} kg of CO₂ by planting trees.', 'success')
+            return redirect(url_for('offset_emissions'))
+
+        except (ValueError, TypeError):
+            flash("Invalid input. Please enter valid numbers.", "error")
+            return redirect(url_for('offset_afforestation'))
+
+    return render_template('offset_afforestation.html')
 
 #certifications route
 @app.route("/certifications")
