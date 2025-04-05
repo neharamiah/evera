@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculate Emissions | Carbon Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-cover bg-no-repeat bg-top min-h-screen flex items-center justify-center" style="background-image: url('/static/bg.png');">
+
+    <div class="max-w-2xl w-full bg-white bg-opacity-10 border-2 border-gray-400 rounded-2xl p-8 text-green-200">
+        <h1 class="text-4xl font-bold text-green-300 mb-6">Calculate Carbon Emissions</h1>
+
+        <form id="emissionForm" class="space-y-6">
+            <div>
+                <label for="weight" class="block font-semibold mb-1">Weight (kg)</label>
+                <input type="number" id="weight" name="weight" placeholder="Enter weight in kg"
+                    class="w-full px-4 py-3 text-black border-2 border-black rounded-lg focus:outline-none" required>
+            </div>
+
+            <div>
+                <label for="distance" class="block font-semibold mb-1">Distance (km)</label>
+                <input type="number" id="distance" name="distance" placeholder="Enter distance in km"
+                    class="w-full px-4 py-3 text-black border-2 border-black rounded-lg focus:outline-none" required>
+            </div>
+
+            <div>
+                <label for="transport" class="block font-semibold mb-1">Transport Mode</label>
+                <select id="transport" name="transport"
+                    class="w-full px-4 py-3 text-black border-2 border-black rounded-lg focus:outline-none" required>
+                    <option value="road">Road</option>
+                    <option value="rail">Rail</option>
+                    <option value="air">Air</option>
+                    <option value="sea">Sea</option>
+                </select>
+            </div>
+
+            <button type="button"
+                class="w-full bg-green-500 bg-opacity-70 text-white px-6 py-3 rounded-lg hover:bg-green-900 hover:opacity-90 transition"
+                onclick="calculateEmissions()">Calculate Emissions</button>
+        </form>
+
+        <div id="result" class="mt-6 text-xl font-bold"></div>
+    </div>
+
+    <script>
+        function calculateEmissions() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const distance = parseFloat(document.getElementById('distance').value);
+            const transport = document.getElementById('transport').value;
+
+            if (isNaN(weight) || isNaN(distance) || weight <= 0 || distance <= 0) {
+                alert("Please enter valid positive numbers for weight and distance.");
+                return;
+            }
+
+            const emissionFactors = {
+                road: 80,
+                rail: 15,
+                air: 550,
+                sea: 20
+            };
+
+            const emissions = weight * distance * emissionFactors[transport];
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `🌍 Estimated Emissions: <strong>${emissions.toFixed(2)} kg CO₂</strong>`;
+        }
+    </script>
+</body>
+</html>

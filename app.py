@@ -85,6 +85,10 @@ def create_database(app):
 def home():
     return render_template("index.html")
 
+@app.route('/calculate')
+def calculate():
+    return render_template('calculate.html')
+
 #signup route
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
