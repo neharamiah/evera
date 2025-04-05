@@ -27,6 +27,27 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(200), nullable=False)
 
 
+#emission model
+class Emission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    weight = db.Column(db.Float, nullable=False)
+    distance = db.Column(db.Float, nullable=False)
+    transport_mode = db.Column(db.String(20), nullable=False)
+    emission = db.Column(db.Float, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('emissions', lazy=True))
+
+emission_factors = {
+    "road": 150,
+    "rail": 50,
+    "air": 450,
+    "sea": 30
+}
+
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -84,11 +105,57 @@ def dashboard():
     return render_template('dashboard.html', user=current_user)
 
 
-#emissionsroute
+#emissionsroute and caclulation
 @app.route("/emissions", methods=["GET", "POST"])
 @login_required
 def emissions():
+    if request.method == "POST":
+        try:
+            weight = float(request.form["weight"])
+            distance = float(request.form["distance"])
+            transport_mode = request.form["transport_mode"]
+
+            if transport_mode not in emission_factors:
+                return jsonify({"success": False, "error": "Invalid transport mode"}), 400
+
+            emission_value = weight * distance * emission_factors[transport_mode] / 1000 # in kg
+
+            new_emission = Emission(
+                user_id=current_user.id,
+                weight=weight,
+                distance=distance,
+                transport_mode=transport_mode,
+                emission=emission_value
+            )
+            db.session.add(new_emission)
+            db.session.commit()
+
+            return jsonify({"success": True, "emission": emission_value})
+
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"success": False, "error": str(e)}), 500
+
     return render_template("emissions.html")
+
+
+
+#might need for graphs
+@app.route("/data")
+@login_required
+def get_emission_data():
+    emissions = Emission.query.filter_by(user_id=current_user.id).all()
+    data = [
+        {
+            "weight": e.weight,
+            "distance": e.distance,
+            "transport_mode": e.transport_mode,
+            "emission": e.emission,
+            "timestamp": e.timestamp.isoformat(),
+        }
+        for e in emissions
+    ]
+    return jsonify(data)
 
 
 #greencore route
