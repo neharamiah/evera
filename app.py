@@ -62,10 +62,10 @@ class Emission(db.Model):
     user = db.relationship('User', backref=db.backref('emissions', lazy=True))
 
 emission_factors = {
-    "road": 150,
-    "rail": 50,
-    "air": 450,
-    "sea": 30
+    "road": 80,
+    "rail": 15,
+    "air": 550,
+    "sea": 20
 }
 
 
@@ -140,7 +140,7 @@ def emissions():
             if transport_mode not in emission_factors:
                 return jsonify({"success": False, "error": "Invalid transport mode"}), 400
 
-            emission_value = weight * distance * emission_factors[transport_mode] / 1000 # in kg
+            emission_value = weight * distance * emission_factors[transport_mode] / 1000 # in g
             current_user.total_emission += emission_value
             current_user.update_emission_and_score()
 
