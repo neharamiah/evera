@@ -1,60 +1,65 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>Calculate Emissions</title>
+    <meta charset="UTF-8">
+    <title>Carbon Emission Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-[#0a1a0a] text-white flex flex-col items-center p-10 min-h-screen">
 
-<body>
-    <div>
-        <h1>Calculate Carbon Emissions</h1>
-
-        <form action="/emissions" method="POST" id="emissionForm">
-            <label for="weight">Weight (kg):</label>
-            <input type="number" name="weight" id="weight" required>
-    
-            <label for="distance">Distance (km):</label>
-            <input type="number" name="distance" id="distance" required>
-    
-            <label for="transport_mode">Transport Mode:</label>
-            <select name="transport_mode" id="transport_mode" required>
-                <option value="road">Road</option>
-                <option value="rail">Rail</option>
-                <option value="air">Air</option>
-                <option value="sea">Sea</option>
-            </select>
-    
-            <button type="submit">Calculate Emission</button>
-        </form>
-    
-
-        <div id="result"></div>
+    <!-- Title and Back Button -->
+    <div class="w-full max-w-5xl flex items-center mb-6">
+        <a href="/dashboard" class="bg-gray-700 text-white font-bold px-4 py-2 rounded-md hover:bg-gray-900 transition text-sm absolute left-0 ml-10">
+            ← Back to Dashboard
+        </a>
+        <h1 class="text-4xl font-bold text-green-300 uppercase mx-auto">Carbon Emission Tracker</h1>
     </div>
-<!-- 
+    
+    <!-- Emission Form -->
+    <form action="/emissions" method="POST" id="emissionForm" class="bg-white bg-opacity-10 backdrop-blur-lg p-6 rounded-lg w-full max-w-md border border-gray-400">
+        <label for="weight" class="block text-lg font-semibold">Weight (kg):</label>
+        <input type="number" name="weight" id="weight" required class="w-full px-4 py-2 mt-2 bg-transparent text-white border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+    
+        <label for="distance" class="block mt-4 text-lg font-semibold">Distance (km):</label>
+        <input type="number" name="distance" id="distance" required class="w-full px-4 py-2 mt-2 bg-transparent text-white border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+    
+        <label for="transport_mode" class="block mt-4 text-lg font-semibold">Transport Mode:</label>
+        <select name="transport_mode" id="transport_mode" required class="w-full px-4 py-2 mt-2 bg-transparent text-white border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+            <option value="road">Road</option>
+            <option value="rail">Rail</option>
+            <option value="air">Air</option>
+            <option value="sea">Sea</option>
+        </select>
+    
+        <button type="submit" class="w-full bg-green-700 text-white font-bold mt-6 p-3 rounded-md hover:bg-green-900 transition">Calculate Emission</button>
+    </form>
+    
+    <!-- View Charts Button -->
+    <button id="view-charts" class="mt-6 bg-green-700 text-white font-bold p-3 rounded-md hover:bg-green-900 transition">View Charts</button>
+
+    <!-- Charts Section -->
+    <div id="chart-container" class="hidden mt-10 p-6 bg-white bg-opacity-10 backdrop-blur-lg rounded-lg w-full max-w-3xl border border-gray-400">
+        <h2 class="text-2xl font-bold text-center mb-4">CO₂ Emissions by Transport Mode</h2>
+        <div id="mode-chart" class="w-full h-96"></div>
+
+        <h2 class="text-2xl font-bold text-center mt-6">Emissions Over Time</h2>
+        <div class="flex space-x-4 mt-4 justify-center">
+            <button onclick="updateTrend('day')" class="bg-green-700 text-white font-bold px-4 py-2 rounded-md hover:bg-green-900 transition">1 Day</button>
+            <button onclick="updateTrend('month')" class="bg-green-700 text-white font-bold px-4 py-2 rounded-md hover:bg-green-900 transition">1 Month</button>
+            <button onclick="updateTrend('year')" class="bg-green-700 text-white font-bold px-4 py-2 rounded-md hover:bg-green-900 transition">1 Year</button>
+        </div>
+        <div id="trend-chart" class="w-full h-96 mt-6"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="/static/script.js"></script>
     <script>
-        function calculateEmissions() {
-            const weight = parseFloat(document.getElementById('weight').value);
-            const distance = parseFloat(document.getElementById('distance').value);
-            const transport = document.getElementById('transport').value;
-
-            if (isNaN(weight) || isNaN(distance) || weight <= 0 || distance <= 0) {
-                alert("Please enter valid positive numbers for weight and distance.");
-                return;
-            }
-
-            const emissionFactors = {
-                road: 150,
-                rail: 50,
-                air: 450,
-                sea: 30
-            };
-
-            const emissions = weight * distance * emissionFactors[transport];
-            const result = document.getElementById('result');
-            result.innerHTML = `Estimated Emissions: ${emissions.toFixed(2)} kg CO₂`;
-        }
-    </script> -->
+        document.getElementById("view-charts").addEventListener("click", function () {
+            let chartContainer = document.getElementById("chart-container");
+            chartContainer.classList.remove("hidden");
+            chartContainer.scrollIntoView({ behavior: "smooth" });
+        });
+    </script>
 </body>
-
 </html>

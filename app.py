@@ -144,7 +144,6 @@ def emissions():
             current_user.total_emission += emission_value
             current_user.update_emission_and_score()
 
-            # ✅ Add this line to track and save the change
             db.session.add(current_user)
 
             new_emission = Emission(
@@ -189,15 +188,18 @@ def get_emission_data():
 @app.route('/greenscore')
 @login_required
 def green_score():
-    # Ensure net_emission and green_score are updated
     current_user.net_emission = max(0, current_user.total_emission - current_user.total_offset)
     current_user.green_score = max(0, 100 - ((current_user.net_emission)*0.0005)) 
     db.session.commit()
+
+    leaderboard = User.query.order_by(User.green_score.desc()).limit(10).all()
+
     return render_template('greenscore.html',
                            total_emissions=current_user.total_emission,
                            total_offset=current_user.total_offset,
                            net_emissions=current_user.net_emission,
                            green_score=current_user.green_score,
+                           leaderboard=leaderboard,
                            enumerate=enumerate)
 
 

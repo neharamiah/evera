@@ -1,36 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>signup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h2>Sign Up</h2>
 
-    <form action="/signup" method="POST">
-        <div>
-            <label>Name</label>
-            <input type="text" name="name" required>
-        </div>
+<body class="flex items-center justify-center min-h-screen bg-[#0a1a0a] text-white">
 
-        <div>
-            <label>Email</label>
-            <input type="email" name="email" required>
-        </div>
+    <div class="w-full max-w-md p-8 bg-white bg-opacity-10 backdrop-blur-lg rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold text-center mb-6">Create Your Account</h2>
 
-        <div>
-            <label>Password</label>
-            <input type="password" name="password" required>
-        </div>
+        <form action="/signup" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-lg font-semibold">Name</label>
+                <input type="text" name="name" required
+                    class="w-full px-4 py-2 mt-1 bg-transparent border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
 
-        <button type="submit">Sign Up</button>
-    </form>
+            <div>
+                <label class="block text-lg font-semibold">Email</label>
+                <input type="email" name="email" required
+                    class="w-full px-4 py-2 mt-1 bg-transparent border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
 
-    <p>
-        Already have an account?
-        <a href="/signin">Sign in</a>
-    </p>
-    
+            <div>
+                <label class="block text-lg font-semibold">Password</label>
+                <input type="password" name="password" required
+                    class="w-full px-4 py-2 mt-1 bg-transparent border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <button type="submit"
+                class="w-full py-2 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-900 transition">
+                Sign Up
+            </button>
+        </form>
+
+        <p class="mt-4 text-center">
+            <a href="/" class="text-green-400 hover:underline">Back to Home</a>
+        </p>
+    </div>
+
 </body>
+
 </html>

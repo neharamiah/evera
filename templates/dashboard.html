@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div>
+
+<body class="min-h-screen bg-[#0a1a0a] text-white flex flex-col items-center justify-center px-6 py-12">
+
+    <!-- Welcome Section -->
+    <div class="text-center mb-12">
+        <h1 class="text-5xl font-extrabold tracking-wide">Welcome, {{ user.name }}! </h1>
+        <p class="text-lg text-gray-400 mt-3 max-w-xl">
+            Take control of your carbon footprint. Track, offset, and make an impact.
+        </p>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl">
         <a href="/emissions" class="dashboard-card">Track Emissions</a>
         <a href="/greenscore" class="dashboard-card">Green Score</a>
         <a href="/offset-emissions" class="dashboard-card">Offset Emissions</a>
@@ -14,5 +25,30 @@
         <a href="/badges" class="dashboard-card">Badges</a>
         <a href="/logout" class="dashboard-card bg-red-600 hover:bg-red-800">Logout</a>
     </div>
+
+    <style>
+        .dashboard-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease-in-out;
+            text-align: center;
+        }
+
+        .dashboard-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+    </style>
+
 </body>
+
 </html>
