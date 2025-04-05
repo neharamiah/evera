@@ -4,10 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>evera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 <body>
-    <h1>Welcome to Evera</h1>
-    <p><a href="{{ url_for('signin') }}">Sign In</a></p>
-    <p><a href="{{ url_for('signup') }}">Sign Up</a></p>
+    <body class="bg-cover bg-top bg-no-repeat"
+      style="background-image: url('/static/bg.png'); background-attachment: scroll;">
+
+      <!-- navbar -->
+      <nav class="fixed top-0 left-0 w-full bg-white bg-opacity-5 backdrop-blur-md shadow-md py-4 px-8 flex justify-between items-center text-white z-50">
+        <h1 class="text-2xl font-bold">Evera</h1>
+        <ul class="hidden md:flex space-x-6">
+            <li><a href="#about" class="hover:text-gray-300">About Us</a></li>
+            <li><a href="#features" class="hover:text-gray-300">Features</a></li>
+            <li><a href="/signin" class="hover:text-gray-300">Login</a></li>
+        </ul>
+        <button class="md:hidden text-white focus:outline-none" id="menu-button">☰</button>
+    </nav>
+
+    <section class="min-h-screen flex items-center justify-start px-6 relative">
+        <div class="text-left text-white max-w-4xl min-h-[600px] p-20 glass">
+            <h1 class="text-7xl font-bold mt-32">Track. Analyze. Offset</h1>
+            <p class="mt-4 text-xl">Building a Greener, Smarter Supply Chain - One Step at a Time</p>
+    </section>
+
 </body>
 </html>
