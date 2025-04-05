@@ -64,3 +64,11 @@ This tool enables companies to compute their carbon footprint based on shipment 
 
 ## Screenshots
 
+![hero page Preview](./assets/heropage.png)
+![aboutus Preview](./assets/aboutus.png)
+![key features Preview](./assets/keyfeatures.png)
+![dashboard Preview](./assets/dashboard.png)
+![emissions Preview](./assets/emissions.png)
+![charts Preview](./assets/charts.png)
+![greenscore Preview](./assets/greenscore.png)
+![offset Preview](./assets/offset.png)
