@@ -1,11 +1,59 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>emissions</title>
+    <title>Calculate Emissions</title>
 </head>
+
 <body>
-    <p>coming soon</p>
+    <div>
+        <h1>Calculate Carbon Emissions</h1>
+
+        <form id="emissionForm">
+            <label for="weight">Weight (kg)</label>
+            <input type="number" id="weight" name="weight" placeholder="Enter weight in kg" required>
+
+            <label for="distance">Distance (km)</label>
+            <input type="number" id="distance" name="distance" placeholder="Enter distance in km" required>
+
+            <label for="transport">Transport Mode</label>
+            <select id="transport" name="transport" required>
+                <option value="road">Road</option>
+                <option value="rail">Rail</option>
+                <option value="air">Air</option>
+                <option value="sea">Sea</option>
+            </select>
+
+            <button type="button" onclick="calculateEmissions()">Calculate Emissions</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calculateEmissions() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const distance = parseFloat(document.getElementById('distance').value);
+            const transport = document.getElementById('transport').value;
+
+            if (isNaN(weight) || isNaN(distance) || weight <= 0 || distance <= 0) {
+                alert("Please enter valid positive numbers for weight and distance.");
+                return;
+            }
+
+            const emissionFactors = {
+                road: 150,
+                rail: 50,
+                air: 450,
+                sea: 30
+            };
+
+            const emissions = weight * distance * emissionFactors[transport];
+            const result = document.getElementById('result');
+            result.innerHTML = `Estimated Emissions: ${emissions.toFixed(2)} kg CO₂`;
+        }
+    </script>
 </body>
+
 </html>
