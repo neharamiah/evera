@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>signin</title>
+</head>
+<body>
+    <h2>Sign In</h2>
+
+    <form action="/signin" method="POST">
+        <div>
+            <label>Email</label>
+            <input type="email" name="email" required>
+        </div>
+
+        <div>
+            <label>Password</label>
+            <input type="password" name="password" required>
+        </div>
+
+        <button type="submit">Sign In</button>
+    </form>
+
+    <p>
+        Don't have an account?
+        <a href="/signup">Sign up</a>
+    </p>
+    
+</body>
+</html>

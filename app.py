@@ -42,6 +42,48 @@ def create_database(app):
 def home():
     return render_template("index.html")
 
+#signup route
+@app.route('/signup', methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
+
+        if User.query.filter_by(email=email).first():
+            flash("Email already registered. Try logging in!", "error")
+            return redirect(url_for("signup"))
+
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+        new_user = User(name=name, email=email, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect(url_for("signin"))
+    return render_template('signup.html')
+
+#signin route
+@app.route('/signin', methods=["GET", "POST"])
+def signin():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            return redirect(url_for("dashboard"))
+
+        flash("Invalid email or password. Try again!", "error")
+    return render_template('signin.html')
+
+#dashboard route
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.html', user=current_user)
+
+
 if __name__ == '__main__':
     create_database(app)
     app.run(debug=True)
