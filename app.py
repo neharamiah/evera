@@ -25,6 +25,28 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(35), unique=True, nullable=False)
     email = db.Column(db.String(35), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    total_emission = db.Column(db.Float, default=0.0)
+    green_score = db.Column(db.Float, nullable=False, default=100.0)
+    total_offset = db.Column(db.Float, default=0.0)
+    net_emission = db.Column(db.Float, default=0.0)
+    badges = db.Column(db.String(200), default="")
+
+    def update_emission_and_score(self):
+        self.total_offset = sum(offset.amount for offset in self.offsets)
+        self.net_emission = max(0, self.total_emission - self.total_offset)
+        self.green_score = max(0, 100 - (self.net_emission / 1000) * 100)
+
+        db.session.commit()
+
+#offset model
+class Offset(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    amount = db.Column(db.Float, nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('offsets', lazy=True))
 
 
 #emission model
@@ -119,6 +141,11 @@ def emissions():
                 return jsonify({"success": False, "error": "Invalid transport mode"}), 400
 
             emission_value = weight * distance * emission_factors[transport_mode] / 1000 # in kg
+            current_user.total_emission += emission_value
+            current_user.update_emission_and_score()
+
+            # ✅ Add this line to track and save the change
+            db.session.add(current_user)
 
             new_emission = Emission(
                 user_id=current_user.id,
@@ -162,7 +189,16 @@ def get_emission_data():
 @app.route('/greenscore')
 @login_required
 def green_score():
-    return render_template('greenscore.html')
+    # Ensure net_emission and green_score are updated
+    current_user.net_emission = max(0, current_user.total_emission - current_user.total_offset)
+    current_user.green_score = max(0, 100 - ((current_user.net_emission)*0.0005)) 
+    db.session.commit()
+    return render_template('greenscore.html',
+                           total_emissions=current_user.total_emission,
+                           total_offset=current_user.total_offset,
+                           net_emissions=current_user.net_emission,
+                           green_score=current_user.green_score,
+                           enumerate=enumerate)
 
 
 
