@@ -16,6 +16,13 @@
         </p>
     </div>
 
+    <!-- Top-right Logout Button -->
+    <a href="/logout" class="absolute top-6 right-6 py-3 px-6">
+        Logout
+    </a>
+    
+    
+
     <!-- Dashboard Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl">
         <a href="/emissions" class="dashboard-card">Track Emissions</a>
@@ -23,7 +30,13 @@
         <a href="/offset-emissions" class="dashboard-card">Offset Emissions</a>
         <a href="/certifications" class="dashboard-card">Certifications</a>
         <a href="/badges" class="dashboard-card">Badges</a>
-        <a href="/logout" class="dashboard-card bg-red-600 hover:bg-red-800">Logout</a>
+
+        <!-- Download Monthly Report Button -->
+        <form action="{{ url_for('download_report', company_id=1, month=4, year=2025) }}" method="get">
+            <button type="submit" class="dashboard-card bg-green-600 hover:bg-green-500">
+                Download Monthly Report (April 2025)
+            </button>
+        </form>
     </div>
 
     <style>

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, flash, render_template, request, send_file, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import json
 from os import path
@@ -7,6 +7,16 @@ from flask_login import UserMixin, LoginManager, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from io import BytesIO
+import pandas as pd
+from sqlalchemy import extract
+import matplotlib.pyplot as plt
+import math
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 app = Flask(__name__)
 
@@ -353,6 +363,116 @@ def badges():
 def logout():
     logout_user()
     return redirect(url_for("home"))
+
+
+
+#monthlyreportd
+@app.route('/download_report/<int:month>/<int:year>')
+@login_required
+def download_report(month, year):
+    user = current_user
+
+    report_data = Emission.query.filter(
+        Emission.user_id == user.id,
+        extract('month', Emission.timestamp) == month,
+        extract('year', Emission.timestamp) == year
+    ).all()
+
+    if not report_data:
+        return "No report data available for this month/year.", 404
+
+    categories = {'Road': 0, 'Rail': 0, 'Air': 0, 'Sea': 0}
+    individual_emissions = []
+    for e in report_data:
+        mode = e.transport_mode.strip().capitalize() 
+        if mode in categories:
+            if isinstance(e.emission, (int, float)):
+                categories[mode] += e.emission
+                individual_emissions.append([e.timestamp.strftime('%Y-%m-%d'), mode, e.emission])
+
+    offsets_data = Offset.query.filter(
+        Offset.user_id == user.id,
+        extract('month', Offset.timestamp) == month,
+        extract('year', Offset.timestamp) == year
+    ).all()
+
+    if not offsets_data:
+        return "No offset data available for this month/year.", 404
+
+    offsets_methods = {'Renewable Energy': 0, 'Reforestation': 0, 'Community Service': 0}
+    for o in offsets_data:
+        if o.category in offsets_methods:
+            if isinstance(o.amount, (int, float)): 
+                offsets_methods[o.category] += o.amount
+
+    emissions_table = [["Transport Mode", "Emissions (kg CO2)"]] + [[mode, f"{value} kg CO2"] for mode, value in categories.items()]
+    offsets_table = [["Offset Method", "Offset Amount (kg CO2)"]] + [[method, f"{value} kg CO2"] for method, value in offsets_methods.items()]
+
+    individual_emissions_table = [["Date", "Transport Mode", "Emission Value (kg CO2)"]] + individual_emissions
+
+    pdf_file = BytesIO()
+    c = canvas.Canvas(pdf_file, pagesize=letter)
+    width, height = letter
+
+    c.setFont("Helvetica-Bold", 12)  
+    c.drawString(50, height - 50, f"Emissions & Offsets Report - {user.name}")
+
+    c.setFont("Helvetica", 10) 
+    y_position = height - 80
+    c.drawString(50, y_position - 20, f"Month: {month} {year}")
+
+    y_position -= 120  
+    c.drawString(50, y_position, "Emissions by Transport Mode:")
+    y_position -= 20 
+
+    emissions_table_data = Table(emissions_table, colWidths=[200, 100])
+    emissions_table_data.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('FONTSIZE', (0, 0), (-1, -1), 8),
+    ]))
+
+    emissions_table_data.wrapOn(c, width, height)
+    emissions_table_data.drawOn(c, 50, y_position)  
+
+    y_position -= 140  
+    c.drawString(50, y_position, "Offsets by Method:")
+    y_position -= 30 
+
+    offsets_table_data = Table(offsets_table, colWidths=[200, 100])
+    offsets_table_data.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('FONTSIZE', (0, 0), (-1, -1), 8),
+    ]))
+
+    offsets_table_data.wrapOn(c, width, height)
+    offsets_table_data.drawOn(c, 50, y_position) 
+
+    c.showPage() 
+    c.drawString(50, height - 50, "Individual Emissions for the Month:")
+    y_position = height - 80
+    individual_emissions_table_data = Table(individual_emissions_table, colWidths=[120, 150, 100])
+    individual_emissions_table_data.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('FONTSIZE', (0, 0), (-1, -1), 8),
+    ]))
+
+    individual_emissions_table_data.wrapOn(c, width, height)
+    individual_emissions_table_data.drawOn(c, 50, y_position) 
+
+    c.save()
+
+    pdf_file.seek(0)
+
+    return send_file(pdf_file, as_attachment=True, download_name=f"report_{user.id}_{month}_{year}.pdf", mimetype="application/pdf")
 
 
 if __name__ == '__main__':
