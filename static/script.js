@@ -62,7 +62,7 @@ function drawModeChart(data) {
     const options = {
         title: "CO₂ Emissions by Transport Mode",
         hAxis: { title: "Mode" },
-        vAxis: { title: "Emissions (kg CO₂)" }
+        vAxis: { title: "Emissions (g CO₂)" }
     };
 
     const chart = new google.visualization.ColumnChart(document.getElementById("mode-chart"));
@@ -115,7 +115,7 @@ function updateTrend(period) {
                 curveType: "function",
                 legend: { position: "bottom" },
                 hAxis: { title: "Date" },
-                vAxis: { title: "Emissions (kg CO₂)" },
+                vAxis: { title: "Emissions (g CO₂)" },
                 explorer: { actions: ["dragToZoom", "rightClickToReset"] }
             };
 
