@@ -3,9 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>badges</title>
+    <title>Badges</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <p>coming soon</p>
+<body class="bg-[#0a1a0a] text-white flex flex-col items-center p-10 min-h-screen">
+    <div class="w-full max-w-5xl align-items-center mb-6">
+        <a href="{{ url_for('dashboard') }}" class="bg-gray-700 text-white font-bold px-4 py-2 rounded-md hover:bg-gray-900 transition text-sm absolute left-0 ml-10">
+            ← Back to Dashboard
+        </a>
+        <h2 class="text-4xl font-bold text-green-300 uppercase text-center mx-auto"> Your badges</h2>
+        <br>
+        <p class="text-2xl text-gray-300 text-center mb-6">
+            Reach Milestones - Earn Achievements!
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="bg-green-700 hover:bg-green-500 p-6 rounded-lg shadow-lg text-center transition">
+            <img src="/static/images/badge1.png" alt="Badge 1" class="mx-auto mb-4">
+            <p class="text-gray-300">Achieved!</p>
+            <p class="text-gray-400">Make your company's first ever offset</p>
+        </div>
+
+        <div class="bg-gray-700 hover:bg-gray-500 p-6 rounded-lg shadow-lg text-center transition">
+            <img src="/static/images/badge2.png" alt="Badge 2" class="mx-auto mb-4 bg-opacity-50">
+            <br>
+            <p class="text-gray-400">Make your company's net emission zero</p>
+        </div>
+
+        <div class="bg-green-700 hover:bg-green-500 p-6 rounded-lg shadow-lg text-center transition">
+            <img src="/static/images/badge3.png" alt="Badge 3" class="mx-auto mb-4">
+            <p class="text-gray-300">Achieved!</p>
+            <p class="text-gray-400">Offset 100 tones of CO2</p>
+        </div>
+
+        <div class="bg-gray-700 hover:bg-gray-500 p-6 rounded-lg shadow-lg text-center transition">
+            <img src="/static/images/badge4.png" alt="Badge 4" class="mx-auto mb-4">
+            <br>
+            <p class="text-gray-400">Maintain a perfect green score</p>
+        </div>
+
+        <div class="bg-gray-700 hover:bg-gray-500 p-6 rounded-lg shadow-lg text-center transition">
+            <img src="/static/images/badge1.png" alt="Badge 1" class="mx-auto mb-4">
+            <br>
+            <p class="text-gray-400">Plant 100 trees</p>
+        </div>
+
+        <div class="bg-gray-700 hover:bg-gray-500 p-6 rounded-lg shadow-lg text-center transition">
+            <img src="/static/images/badge2.png" alt="Badge 2" class="mx-auto mb-4 bg-opacity-50">
+            <br>
+            <p class="text-gray-400">Use 1000kW of solar energy</p>
+        </div>
+
+        <div class="bg-gray-700 hover:bg-gray-500 p-6 rounded-lg shadow-lg text-center transition">
+            <img src="/static/images/badge3.png" alt="Badge 3" class="mx-auto mb-4">
+            <br>
+            <p class="text-gray-400">Come #1 in leaderboards</p>
+        </div>
+
+        <div class="bg-gray-700 hover:bg-gray-500 p-6 rounded-lg shadow-lg text-center transition">
+            <img src="/static/images/badge4.png" alt="Badge 4" class="mx-auto mb-4">
+            <br>
+            <p class="text-gray-400">Offset 50% of your company's emissions</p>
+        </div>
+
+    </div>
+
 </body>
 </html>

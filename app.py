@@ -61,6 +61,15 @@ class Emission(db.Model):
 
     user = db.relationship('User', backref=db.backref('emissions', lazy=True))
 
+#certifications model
+class Certificate(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    file_path = db.Column(db.String(255), nullable=False)
+    upload_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+
 emission_factors = {
     "road": 80,
     "rail": 15,
@@ -68,7 +77,45 @@ emission_factors = {
     "sea": 20
 }
 
+UPLOAD_FOLDER = "static/uploads"
+ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg"}
 
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route("/upload_certificate", methods=["POST"])
+def upload_certificate():
+    if "certificate" not in request.files:
+        flash("No file part")
+        return redirect(request.referrer)
+
+    file = request.files["certificate"]
+    company_name = request.form.get("company_name")
+    title = request.form.get("title")
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file.save(file_path)
+
+        new_certificate = Certificate(company_name=company_name, title=title, file_path=file_path)
+        db.session.add(new_certificate)
+        db.session.commit()
+
+        flash("Certificate uploaded successfully!")
+        return redirect(url_for("certifications_page"))
+
+    flash("Invalid file type!")
+    return redirect(request.referrer)
+
+@app.route("/certifications")
+
+
+def certifications_page():
+    certificates = Certificate.query.order_by(Certificate.upload_date.desc()).all()
+    return render_template("certifications.html", certificates=certificates)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -287,16 +334,17 @@ def offset_afforestation():
 
     return render_template('offset_afforestation.html')
 
-#certifications route
-@app.route("/certifications")
-def certifications_page():
-    return render_template("certifications.html")
+# #certifications route
+# @app.route("/certifications")
+# def certifications_page():
+#     return render_template("certifications.html")
 
 
 #badges route
 @app.route('/badges')
 def badges():
-    return render_template('badges.html')
+    return render_template('badges.html', badges=badges)
+
 
 
 #logout
