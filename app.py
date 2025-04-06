@@ -307,7 +307,7 @@ def offset_renewable():
             current_user.update_emission_and_score()
 
             flash(f'Success! You offset {offset_amount} g of CO₂ from renewable energy.', 'success')
-            return redirect(url_for('offset_emissions'))
+            return render_template('offset_renewable.html')
 
         except (ValueError, TypeError):
             flash('Invalid input. Please enter valid numbers for kWh, sunlight hours, and days.', 'error')
@@ -335,8 +335,8 @@ def offset_afforestation():
 
             current_user.update_emission_and_score()
 
-            flash(f'Success! You offset {offset_amount} kg of CO₂ by planting trees.', 'success')
-            return redirect(url_for('offset_emissions'))
+            flash(f'Success! You offset {offset_amount} g of CO₂ by planting trees.', 'success')
+            return render_template('offset_afforestation.html')
 
         except (ValueError, TypeError):
             flash("Invalid input. Please enter valid numbers.", "error")

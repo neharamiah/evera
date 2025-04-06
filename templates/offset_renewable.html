@@ -23,6 +23,22 @@
             Enter your solar panel details to calculate and offset CO₂ emissions.
         </p>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-4">
+            {% for category, message in messages %}
+                <div class="p-4 rounded-lg text-white font-semibold 
+                    {% if category == 'success' %} bg-green-600 
+                    {% elif category == 'error' %} bg-red-600 
+                    {% else %} bg-gray-700 
+                    {% endif %}">
+                {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
         <form method="POST" action="{{ url_for('offset_renewable') }}" class="flex flex-col gap-4">
             <label class="font-medium">Energy Produced (kWh):</label>
             <input type="number" name="kwh" id="kwh" step="0.01" required 
