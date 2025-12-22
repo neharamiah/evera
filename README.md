@@ -20,9 +20,10 @@ This tool enables companies to compute their carbon footprint based on shipment 
   - Emissions by transport mode (Bar Chart)
   - Emissions over time (Line Chart)
 -  **Green Score** Displays green score with leaderboard
--  **Offset emissions** through various ways like using remewable energy and reforestation (in progress)
--  **Certifications** for companies to upload their certificates which will be displayed on their dashboard and to the public after verification (in progress)
--  **Badges**  Custom badges awarded to companies when they reach milestones ehich will be displayed on they dashboard (in progress)
+-  **Offset emissions** through various ways like using remewable energy and reforestation 
+-  **Certifications** for companies to upload their certificates which will be displayed on their dashboard and to the public after verification 
+-  **Badges**  Custom badges awarded to companies when they reach milestones ehich will be displayed on they dashboard
+-  **Monthly Report** Readily downloadable pdf of your monthly report including all emissions and offsets.
 
 
 ---

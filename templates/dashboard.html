@@ -32,19 +32,63 @@
         <a href="/badges" class="dashboard-card">Badges</a>
 
         <!-- Download Monthly Report Button -->
-        <form action="{{ url_for('download_report', company_id=1, month=4, year=2025) }}" method="get">
-            <button type="submit" class="dashboard-card bg-green-600 hover:bg-green-500">
-                Download Monthly Report (April 2025)
-            </button>
-        </form>
+        <button onclick="openModal()" class="dashboard-card bg-green-600 hover:bg-green-500">
+            Download Monthly Report
+        </button>
     </div>
+
+    <!-- Modal for Report Download -->
+    <div id="reportModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+            <h2 class="text-xl font-bold mb-4 text-center">Select Month and Year</h2>
+            <form action="{{ url_for('download_report') }}" method="post">
+                <div class="mb-4">
+                    <label for="modal-month" class="block text-sm font-medium text-gray-700 mb-1">Month:</label>
+                    <select name="month" id="modal-month" class="w-full p-2 border border-gray-300 rounded text-black">
+                        {% for m in range(1, 13) %}
+                        <option value="{{ m }}" {% if m == current_month %}selected{% endif %}>{{ m }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="modal-year" class="block text-sm font-medium text-gray-700 mb-1">Year:</label>
+                    <select name="year" id="modal-year" class="w-full p-2 border border-gray-300 rounded text-black">
+                        {% for y in range(current_year, current_year-5, -1) %}
+                        <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Download</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('reportModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('reportModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('reportModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+    </script>
 
     <style>
         .dashboard-card {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100px;
+            min-height: 100px;
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;

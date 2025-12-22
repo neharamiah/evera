@@ -8,15 +8,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from io import BytesIO
-import pandas as pd
-from sqlalchemy import extract
-import matplotlib.pyplot as plt
-import math
-from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from io import BytesIO
+from sqlalchemy import extract
 
 app = Flask(__name__)
 
@@ -185,7 +181,9 @@ def signin():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', user=current_user)
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+    return render_template('dashboard.html', user=current_user, current_month=current_month, current_year=current_year)
 
 
 #emissionsroute and caclulation
@@ -367,9 +365,15 @@ def logout():
 
 
 #monthlyreportd
-@app.route('/download_report/<int:month>/<int:year>')
+@app.route('/download_report', methods=['GET', 'POST'])
 @login_required
-def download_report(month, year):
+def download_report():
+    if request.method == 'POST':
+        month = int(request.form['month'])
+        year = int(request.form['year'])
+    else:
+        month = int(request.args.get('month', datetime.now().month))
+        year = int(request.args.get('year', datetime.now().year))
     user = current_user
 
     report_data = Emission.query.filter(
@@ -378,101 +382,121 @@ def download_report(month, year):
         extract('year', Emission.timestamp) == year
     ).all()
 
-    if not report_data:
-        return "No report data available for this month/year.", 404
-
-    categories = {'Road': 0, 'Rail': 0, 'Air': 0, 'Sea': 0}
-    individual_emissions = []
-    for e in report_data:
-        mode = e.transport_mode.strip().capitalize() 
-        if mode in categories:
-            if isinstance(e.emission, (int, float)):
-                categories[mode] += e.emission
-                individual_emissions.append([e.timestamp.strftime('%Y-%m-%d'), mode, e.emission])
-
     offsets_data = Offset.query.filter(
         Offset.user_id == user.id,
         extract('month', Offset.timestamp) == month,
         extract('year', Offset.timestamp) == year
     ).all()
 
-    if not offsets_data:
-        return "No offset data available for this month/year.", 404
+    if not report_data and not offsets_data:
+        return "No report data available for this month/year.", 404
 
-    offsets_methods = {'Renewable Energy': 0, 'Reforestation': 0, 'Community Service': 0}
+    # ---------------- Data Processing ----------------
+    categories = {'Road': 0, 'Rail': 0, 'Air': 0, 'Sea': 0}
+    individual_emissions = []
+
+    for e in report_data:
+        mode = e.transport_mode.strip().capitalize()
+        if mode in categories and isinstance(e.emission, (int, float)):
+            categories[mode] += e.emission
+            individual_emissions.append([
+                e.timestamp.strftime('%Y-%m-%d'),
+                mode,
+                f"{e.emission:.2f}"
+            ])
+
+    offsets_methods = {'Renewable Energy': 0, 'Afforestation': 0}
     for o in offsets_data:
-        if o.category in offsets_methods:
-            if isinstance(o.amount, (int, float)): 
-                offsets_methods[o.category] += o.amount
+        if o.category in offsets_methods and isinstance(o.amount, (int, float)):
+            offsets_methods[o.category] += o.amount / 1000  # Convert to kg
 
-    emissions_table = [["Transport Mode", "Emissions (kg CO2)"]] + [[mode, f"{value} kg CO2"] for mode, value in categories.items()]
-    offsets_table = [["Offset Method", "Offset Amount (kg CO2)"]] + [[method, f"{value} kg CO2"] for method, value in offsets_methods.items()]
-
-    individual_emissions_table = [["Date", "Transport Mode", "Emission Value (kg CO2)"]] + individual_emissions
-
+    # ---------------- PDF Setup ----------------
     pdf_file = BytesIO()
-    c = canvas.Canvas(pdf_file, pagesize=letter)
-    width, height = letter
+    doc = SimpleDocTemplate(
+        pdf_file,
+        pagesize=letter,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=50,
+        bottomMargin=40
+    )
 
-    c.setFont("Helvetica-Bold", 12)  
-    c.drawString(50, height - 50, f"Emissions & Offsets Report - {user.name}")
+    styles = getSampleStyleSheet()
+    elements = []
 
-    c.setFont("Helvetica", 10) 
-    y_position = height - 80
-    c.drawString(50, y_position - 20, f"Month: {month} {year}")
+    # ---------------- Title ----------------
+    elements.append(Paragraph(
+        f"<b>Emissions & Offsets Report</b><br/>{user.name} — {month}/{year}",
+        styles["Title"]
+    ))
+    elements.append(Spacer(1, 20))
 
-    y_position -= 120  
-    c.drawString(50, y_position, "Emissions by Transport Mode:")
-    y_position -= 20 
+    # ---------------- Emissions Summary ----------------
+    elements.append(Paragraph("<b>Emissions by Transport Mode</b>", styles["Heading2"]))
+    elements.append(Spacer(1, 10))
 
-    emissions_table_data = Table(emissions_table, colWidths=[200, 100])
+    emissions_table = [["Transport Mode", "Emissions (kg CO₂)"]] + [
+        [mode, f"{value:.2f}"] for mode, value in categories.items()
+    ]
+
+    emissions_table_data = Table(emissions_table, colWidths=[250, 150])
     emissions_table_data.setStyle(TableStyle([
         ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-        ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('FONTSIZE', (0, 0), (-1, -1), 8),
+        ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
     ]))
 
-    emissions_table_data.wrapOn(c, width, height)
-    emissions_table_data.drawOn(c, 50, y_position)  
+    elements.append(emissions_table_data)
+    elements.append(Spacer(1, 25))
 
-    y_position -= 140  
-    c.drawString(50, y_position, "Offsets by Method:")
-    y_position -= 30 
+    # ---------------- Offsets Summary ----------------
+    elements.append(Paragraph("<b>Offsets by Method</b>", styles["Heading2"]))
+    elements.append(Spacer(1, 10))
 
-    offsets_table_data = Table(offsets_table, colWidths=[200, 100])
+    offsets_table = [["Offset Method", "Offset Amount (kg CO₂)"]] + [
+        [method, f"{value:.2f}"] for method, value in offsets_methods.items()
+    ]
+
+    offsets_table_data = Table(offsets_table, colWidths=[250, 150])
     offsets_table_data.setStyle(TableStyle([
         ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-        ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('FONTSIZE', (0, 0), (-1, -1), 8),
+        ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
     ]))
 
-    offsets_table_data.wrapOn(c, width, height)
-    offsets_table_data.drawOn(c, 50, y_position) 
+    elements.append(offsets_table_data)
+    elements.append(Spacer(1, 30))
 
-    c.showPage() 
-    c.drawString(50, height - 50, "Individual Emissions for the Month:")
-    y_position = height - 80
-    individual_emissions_table_data = Table(individual_emissions_table, colWidths=[120, 150, 100])
-    individual_emissions_table_data.setStyle(TableStyle([
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-        ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('FONTSIZE', (0, 0), (-1, -1), 8),
-    ]))
+    # ---------------- Individual Emissions ----------------
+    if individual_emissions:
+        elements.append(Paragraph("<b>Individual Emissions</b>", styles["Heading2"]))
+        elements.append(Spacer(1, 10))
 
-    individual_emissions_table_data.wrapOn(c, width, height)
-    individual_emissions_table_data.drawOn(c, 50, y_position) 
+        individual_table = [["Date", "Transport Mode", "Emission (kg CO₂)"]] + individual_emissions
 
-    c.save()
+        individual_table_data = Table(individual_table, colWidths=[120, 200, 100])
+        individual_table_data.setStyle(TableStyle([
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('ALIGN', (2, 1), (-1, -1), 'RIGHT'),
+        ]))
 
+        elements.append(individual_table_data)
+
+    # ---------------- Build PDF ----------------
+    doc.build(elements)
     pdf_file.seek(0)
 
-    return send_file(pdf_file, as_attachment=True, download_name=f"report_{user.id}_{month}_{year}.pdf", mimetype="application/pdf")
+    return send_file(
+        pdf_file,
+        as_attachment=True,
+        download_name=f"report_{user.id}_{month}_{year}.pdf",
+        mimetype="application/pdf"
+    )
+
 
 
 if __name__ == '__main__':
