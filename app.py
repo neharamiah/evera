@@ -342,18 +342,10 @@ def offset_afforestation():
 
     return render_template('offset_afforestation.html')
 
-# #certifications route
-# @app.route("/certifications")
-# def certifications_page():
-#     return render_template("certifications.html")
-
-
 #badges route
 @app.route('/badges')
 def badges():
     return render_template('badges.html', badges=badges)
-
-
 
 #logout
 @app.route("/logout")
@@ -361,8 +353,6 @@ def badges():
 def logout():
     logout_user()
     return redirect(url_for("home"))
-
-
 
 #monthlyreportd
 @app.route('/download_report', methods=['GET', 'POST'])
@@ -391,7 +381,7 @@ def download_report():
     if not report_data and not offsets_data:
         return "No report data available for this month/year.", 404
 
-    # ---------------- Data Processing ----------------
+#data for reports
     categories = {'Road': 0, 'Rail': 0, 'Air': 0, 'Sea': 0}
     individual_emissions = []
 
@@ -410,7 +400,7 @@ def download_report():
         if o.category in offsets_methods and isinstance(o.amount, (int, float)):
             offsets_methods[o.category] += o.amount / 1000  # Convert to kg
 
-    # ---------------- PDF Setup ----------------
+#pdf setup
     pdf_file = BytesIO()
     doc = SimpleDocTemplate(
         pdf_file,
@@ -424,14 +414,13 @@ def download_report():
     styles = getSampleStyleSheet()
     elements = []
 
-    # ---------------- Title ----------------
+#report layout
     elements.append(Paragraph(
         f"<b>Emissions & Offsets Report</b><br/>{user.name} — {month}/{year}",
         styles["Title"]
     ))
     elements.append(Spacer(1, 20))
 
-    # ---------------- Emissions Summary ----------------
     elements.append(Paragraph("<b>Emissions by Transport Mode</b>", styles["Heading2"]))
     elements.append(Spacer(1, 10))
 
@@ -446,14 +435,12 @@ def download_report():
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
     ]))
-
+#emission data
     elements.append(emissions_table_data)
     elements.append(Spacer(1, 25))
-
-    # ---------------- Offsets Summary ----------------
     elements.append(Paragraph("<b>Offsets by Method</b>", styles["Heading2"]))
     elements.append(Spacer(1, 10))
-
+#offset data
     offsets_table = [["Offset Method", "Offset Amount (kg CO₂)"]] + [
         [method, f"{value:.2f}"] for method, value in offsets_methods.items()
     ]
@@ -469,7 +456,7 @@ def download_report():
     elements.append(offsets_table_data)
     elements.append(Spacer(1, 30))
 
-    # ---------------- Individual Emissions ----------------
+  #daywise emission data
     if individual_emissions:
         elements.append(Paragraph("<b>Individual Emissions</b>", styles["Heading2"]))
         elements.append(Spacer(1, 10))
@@ -486,7 +473,7 @@ def download_report():
 
         elements.append(individual_table_data)
 
-    # ---------------- Build PDF ----------------
+
     doc.build(elements)
     pdf_file.seek(0)
 

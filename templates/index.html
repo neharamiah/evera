@@ -26,36 +26,45 @@
             <li><a href="/signin" class="hover:text-gray-300">Login</a></li>
         </ul>
         <button class="md:hidden text-white focus:outline-none transition duration-300 ease-in-out hover:text-green-400" id="menu-button">☰</button>
-    </nav>
+      </nav>
+
+      <!-- mobile menu -->
+      <div id="mobile-menu" class="hidden fixed top-16 left-0 w-full bg-white bg-opacity-5 backdrop-blur-md shadow-md py-4 px-8 text-white z-40 md:hidden">
+        <ul class="flex flex-col space-y-4">
+            <li><a href="#about" class="hover:text-gray-300">About Us</a></li>
+            <li><a href="#features" class="hover:text-gray-300">Features</a></li>
+            <li><a href="/signin" class="hover:text-gray-300">Login</a></li>
+        </ul>
+      </div>
 
     <!-- herosec -->
-    <section class="min-h-screen flex items-center justify-start px-6 relative">
-        <div class="text-left text-white max-w-4xl min-h-[600px] p-20 glass">
-            <h1 class="text-8xl font-bold mt-32">EVERA</h1>
-            <p class="mt-4 text-4axl">   Track. Analyze. Offset</p>
-            <p class="mt-4 text-xl">   Building a Greener, Smarter Supply Chain - One Step at a Time</p>
-            <button class="transition duration-600 ease-in-out mt-6 px-6 py-3 bg-green-800 text-white font-semibold rounded-lg shadow-md hover:bg-green-900 transition">
+    <section class="min-h-screen flex items-center justify-start px-4 md:px-6 relative">
+        <div class="text-left text-white max-w-4xl min-h-[400px] md:min-h-[600px] p-8 md:p-20 glass">
+            <h1 class="text-5xl md:text-8xl font-bold mt-16 md:mt-32">EVERA</h1>
+            <p class="mt-4 text-2xl md:text-4xl">   Track. Analyze. Offset</p>
+            <p class="mt-4 text-base md:text-lg">   Building a Greener, Smarter Supply Chain - One Step at a Time</p>
+            <button class="transition duration-600 ease-in-out mt-6 px-4 md:px-6 py-3 bg-green-800 text-white font-semibold rounded-lg shadow-md hover:bg-green-900 transition">
                 <a href="/calculate" class="fade-in transition duration-300 ease-in-out ">Calculate Emissions</a>
             </button>
         </div>
     </section>
 
     <!-- aboutus section -->
-    <section id="about" class="min-h-screen flex flex-col justify-center items-center text-white px-8 relative">
+    <section id="about" class="min-h-screen flex flex-col justify-center items-center text-white px-4 md:px-8 relative">
         <div class="absolute top-20 max-w-2xl">
             <br><br>
-            <h2 class="text-6xl font-bold text-center">About Us</h2>
-            <p class="mt-4 text-lg text-gray-300 text-center">
+            <h2 class="text-4xl md:text-6xl font-bold text-center">About Us</h2>
+            <p class="mt-4 text-base md:text-lg text-gray-300 text-center">
                 Evera is a Sustainability-first platform focused on Transforming the Future of Logistics. We help businesses Track, Visualise, and Analyze their Carbon Emissions within Supply Chains -  combining Innovation and Technology
             </p>
             <br>
             <br><br><br><br>
-            <h2 class="text-6xl font-bold text-center">Our Mission</h2>
-            <p class="mt-4 text-lg text-gray-300 text-center">
+            <h2 class="text-4xl md:text-6xl font-bold text-center">Our Mission</h2>
+            <p class="mt-4 text-base md:text-lg text-gray-300 text-center">
                 Our Mission is to make sustainability measurable, accessible and actionable for every supply chain. Through data driven insights and dashboards, we empower companies toreduce their environmental impact and pave the way towards net zero logistics.
             </p>
         </div>
-        
+
     </section>
 
 
@@ -187,7 +196,7 @@
             <h3 class="text-xl font-semibold">Contact Us</h3>
             <p class="mt-2 text-gray-300">Email: support@evera.com</p>
             <p class="text-gray-300">Phone: +91 9988776655</p>
-            <p class="text-gray-300">Location: chennai, TamilNadu</p>
+            <p class="text-gray-300">Location: Bengaluru, Karnataka</p>
         </div>
     </div>
 
@@ -196,10 +205,15 @@
     </div>
 </footer>
 
+<script>
+    // Mobile menu toggle
+    const menuButton = document.getElementById('menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
 
-
-
-
+    menuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>
 
 </body>
 </html>

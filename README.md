@@ -33,7 +33,7 @@ This tool enables companies to compute their carbon footprint based on shipment 
 - **Frontend**: HTML, CSS, Tailwind CSS, JavaScript  
 - **Backend**: Python, Flask  
 - **Database**: SQLite + SQLAlchemy  
-- **Charts & Visualization**: Google Charts  
+- **Charts & Visualization**: matplotlib, numpy 
 
 ---
 
